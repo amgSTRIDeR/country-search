@@ -1,5 +1,5 @@
 import type { Country } from "..";
-import { InvalidArgumentsError } from '../errors/errors';
+import { HttpError, InvalidArgumentsError } from '../errors/errors';
 
 export function searchCountries(query: string, signal: AbortSignal): Promise<Country[]> {
     if (typeof query !== 'string' || !(signal instanceof AbortSignal)) {
@@ -9,8 +9,12 @@ export function searchCountries(query: string, signal: AbortSignal): Promise<Cou
     const url = `https://countries.dev/name/${encodeURIComponent(query)}`;
 
     return fetch(url, { signal }).then((response) => {
+        if (response.status === 404) {
+            return [];
+        }
+
         if (!response.ok) {
-            throw new Error(`Country search failed with status ${response.status}`);
+            throw new HttpError(response.status);
         }
 
         return response.json() as Promise<Country[]>;
