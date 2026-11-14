@@ -1,9 +1,5 @@
 import { InvalidArgumentsError } from '../errors/errors';
-
-type Debounced<T extends (...args: never[]) => unknown> =
-  ((...args: Parameters<T>) => void) & {
-    cancel: () => void;
-  };
+import type { Debounced } from '../models/models';
 
 export default function debounce<T extends (...args: never[]) => void>(
   fn: T,
