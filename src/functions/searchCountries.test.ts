@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { InvalidArgumentsError } from '../errors/errors';
+import { HttpError, InvalidArgumentsError } from '../errors/errors';
 import { searchCountries } from './searchCountries';
 
 const fetchMock = vi.fn();
@@ -38,15 +38,25 @@ describe('searchCountries', () => {
         );
     });
 
-    test.each([404, 500])('should reject when the response status is %i', async (status) => {
+    test('should return an empty array when the response status is 404', async () => {
         fetchMock.mockResolvedValue({
             ok: false,
-            status,
-            json: vi.fn().mockResolvedValue({ message: 'Request failed' }),
+            status: 404,
         });
 
         await expect(
-            searchCountries('Japan', new AbortController().signal),
-        ).rejects.toThrow();
+            searchCountries('Unknown', new AbortController().signal),
+        ).resolves.toEqual([]);
+    });
+
+    test.each([400, 500])('should reject with HttpError when the response status is %i', async (status) => {
+        fetchMock.mockResolvedValue({
+            ok: false,
+            status,
+        });
+
+        const request = searchCountries('Japan', new AbortController().signal);
+        await expect(request).rejects.toBeInstanceOf(HttpError);
+        await expect(request).rejects.toMatchObject({ status });
     });
 });
