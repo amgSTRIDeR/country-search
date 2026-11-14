@@ -53,3 +53,28 @@ export interface CountryMaps {
 }
 
 export type Countries = Country[];
+
+
+export type MappedCountry = Pick<
+    Country,
+    | 'name'
+    | 'topLevelDomain'
+    | 'alpha2Code'
+    | 'alpha3Code'
+    | 'callingCodes'
+    | 'capital'
+    | 'subregion'
+    | 'region'
+    | 'population'
+    | 'latlng'
+    | 'demonym'
+    | 'area'
+    | 'timezones'
+    | 'borders'
+    | 'nativeName'
+    | 'numericCode'
+    | 'currencies'
+    | 'languages'
+    | 'flag'
+    | 'populationDensity'
+>;
