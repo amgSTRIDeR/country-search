@@ -32,10 +32,7 @@ describe('searchCountries', () => {
         });
 
         await expect(searchCountries('Japan', signal)).resolves.toEqual(countries);
-        expect(fetchMock).toHaveBeenCalledWith(
-            expect.stringContaining('Japan'),
-            expect.objectContaining({ signal }),
-        );
+        expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('Japan'), expect.objectContaining({ signal }));
     });
 
     test('should return an empty array when the response status is 404', async () => {
@@ -44,9 +41,7 @@ describe('searchCountries', () => {
             status: 404,
         });
 
-        await expect(
-            searchCountries('Unknown', new AbortController().signal),
-        ).resolves.toEqual([]);
+        await expect(searchCountries('Unknown', new AbortController().signal)).resolves.toEqual([]);
     });
 
     test.each([400, 500])('should reject with HttpError when the response status is %i', async (status) => {

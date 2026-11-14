@@ -1,4 +1,4 @@
-import type { Country, MappedCountry } from "../models/models";
+import type { Country, MappedCountry } from '../models/models';
 
 export function mapCountryResponse(raw: Country): MappedCountry {
     const {

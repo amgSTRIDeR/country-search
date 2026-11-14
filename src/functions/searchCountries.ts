@@ -1,5 +1,6 @@
-import type { Country } from "..";
+
 import { HttpError, InvalidArgumentsError } from '../errors/errors';
+import type { Country } from '../models/models';
 
 export function searchCountries(query: string, signal: AbortSignal): Promise<Country[]> {
     if (typeof query !== 'string' || !(signal instanceof AbortSignal)) {
