@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import type { Country } from '..';
+import type { Country } from '../models/models';
 import { mapCountryResponse } from './mapCountryResponse';
 
 describe('mapCountryResponse', () => {
@@ -25,7 +25,12 @@ describe('mapCountryResponse', () => {
             flags: { svg: 'japan.svg', png: 'japan.png' },
             currencies: [{ code: 'JPY', name: 'Japanese yen', symbol: '¥' }],
             languages: [
-                { iso639_1: 'ja', name: 'Japanese', nativeName: '日本語' },
+                {
+                    iso639_1: 'ja',
+                    iso639_2: 'jpn',
+                    name: 'Japanese',
+                    nativeName: '日本語',
+                },
             ],
             flag: '🇯🇵',
             maps: {
@@ -54,7 +59,12 @@ describe('mapCountryResponse', () => {
             numericCode: '392',
             currencies: [{ code: 'JPY', name: 'Japanese yen', symbol: '¥' }],
             languages: [
-                { iso639_1: 'ja', name: 'Japanese', nativeName: '日本語' },
+                {
+                    iso639_1: 'ja',
+                    iso639_2: 'jpn',
+                    name: 'Japanese',
+                    nativeName: '日本語',
+                },
             ],
             flag: '🇯🇵',
             populationDensity: 326.2,
