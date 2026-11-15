@@ -1,0 +1,504 @@
+:root {
+    font-family: 'Courier New', 'Lucida Console', monospace;
+    font-synthesis: none;
+    -webkit-font-smoothing: none;
+    --parkan-green: #39f63b;
+    --parkan-yellow: #f0dc67;
+    --parkan-violet: #a498ba;
+}
+* {
+    box-sizing: border-box;
+}
+html,
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100%;
+}
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #06040a;
+}
+button,
+input {
+    font: inherit;
+}
+button {
+    cursor: pointer;
+}
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid #f4d875;
+    outline-offset: 2px;
+}
+
+.parkan-app {
+    width: min(100%, 1448px);
+    aspect-ratio: 1448 / 1086;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: #030105 url('./assets/background.png') center / 100% 100% no-repeat;
+    box-shadow: 0 5px 35px #000b;
+}
+
+.search-panel {
+    position: absolute;
+    left: 3.45%;
+    top: 66.6%;
+    width: 23.35%;
+    height: 26.15%;
+    display: flex;
+    flex-direction: column;
+    padding: 7px;
+    gap: 5px;
+    z-index: 1;
+    overflow: hidden;
+    background: repeating-linear-gradient(0deg, #10091b 0 2px, #191024 3px 5px);
+    border: 1px solid #91839e;
+    box-shadow:
+        0 0 0 2px #241629,
+        inset 0 0 0 1px #3a2d44;
+    color: var(--parkan-yellow);
+}
+.terminal-heading {
+    flex: 0 0 auto;
+    margin: 0;
+    color: #ffe568;
+    background: #0c0710;
+    border: 1px solid #8e7d9a;
+    font-weight: bold;
+    line-height: 1.15;
+    padding: 2px 4px;
+    text-align: center;
+    font-size: clamp(10px, 1.08vw, 16px);
+}
+.search-form {
+    flex: 0 0 auto;
+    display: flex;
+    min-height: 28px;
+    gap: 3px;
+}
+.search-input {
+    width: 100%;
+    min-width: 0;
+    padding: 4px 5px;
+    color: #f7eba6;
+    font-size: clamp(10px, 1vw, 14px);
+    background: #07030c;
+    border: 1px solid #9484a4;
+    outline-offset: -2px;
+}
+.search-input::placeholder {
+    color: #b8adbb;
+    opacity: 1;
+}
+.search-submit,
+.retry-button {
+    color: #14100b;
+    background: #c3af6f;
+    border: 1px solid #f5d88f;
+    padding: 3px 6px;
+    font-weight: bold;
+    font-size: clamp(10px, 0.98vw, 14px);
+}
+.search-submit:hover,
+.retry-button:hover {
+    background: #f6d584;
+}
+.terminal-subheading {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 2px 0 1px;
+    border-bottom: 1px solid #5e4867;
+    color: var(--parkan-green);
+    font-size: clamp(10px, 0.89vw, 13px);
+    line-height: 1.15;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+.results-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-color: #8f7c9d #170d1c;
+    scrollbar-width: thin;
+}
+.result-item {
+    display: grid;
+    grid-template-columns: 25px minmax(0, 1fr) auto;
+    width: 100%;
+    min-height: 26px;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 4px;
+    text-align: left;
+    font-size: clamp(10px, 0.94vw, 14px);
+    color: #f6de70;
+    background: #09050ee9;
+    border: 1px solid #3b2c44;
+}
+.result-item + .result-item {
+    border-top: 0;
+}
+.result-item:hover,
+.result-item.selected {
+    color: #fff3a6;
+    background: #352217;
+    border-color: #efb749;
+}
+.country-flag {
+    font-size: 17px;
+    line-height: 1.1;
+}
+.country-name,
+.country-region {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.country-region {
+    font-size: 0.8em;
+    color: #50f54e;
+}
+.history-track {
+    flex: 0 0 32px;
+    display: flex;
+    gap: 3px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-height: 0;
+    scrollbar-color: #887990 #18101c;
+    scrollbar-width: thin;
+}
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 auto;
+    min-width: 70px;
+    max-width: 160px;
+    padding: 2px 5px;
+    border: 1px solid #8c7894;
+    color: #eddd88;
+    background: #0c0610;
+    font-size: clamp(10px, 0.83vw, 12px);
+}
+.history-item:hover,
+.history-item.selected {
+    border-color: #dfad50;
+    background: #332116;
+}
+.history-item .country-flag {
+    font-size: 15px;
+}
+.history-empty,
+.result-state {
+    color: #afa5b5;
+    margin: 5px 2px;
+    font-size: clamp(10px, 0.95vw, 14px);
+}
+.error-state {
+    color: #f57c71;
+}
+.retry-button {
+    align-self: flex-start;
+    margin: 5px 0;
+}
+
+.sound-panel {
+    position: absolute;
+    z-index: 1;
+    top: 56.25%;
+    right: 12.2%;
+    width: 26.8%;
+    min-height: 37px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    overflow: hidden;
+    color: var(--parkan-green);
+    background: #0a0612f5;
+    border: 2px ridge #b3a2bf;
+    box-shadow:
+        inset 0 0 0 1px #2a1b31,
+        1px 1px 0 #000;
+    font-size: clamp(10px, 1vw, 14px);
+}
+.sound-title {
+    color: #efdb72;
+}
+.sound-play {
+    flex: 0 0 auto;
+    color: #f5e186;
+    background: #24182b;
+    border: 1px solid #85758f;
+    padding: 4px 7px;
+    white-space: nowrap;
+}
+.sound-play:hover {
+    background: #3b2b43;
+}
+.sound-volume-label {
+    color: #47fa4b;
+    white-space: nowrap;
+}
+.sound-volume {
+    appearance: none;
+    min-width: 35px;
+    flex: 1 1 auto;
+    margin: 0;
+    height: 11px;
+    border: 2px solid #8a7795;
+    border-radius: 0;
+    cursor: pointer;
+    background: linear-gradient(to right, #34ed30 0 var(--volume), #3d3048 var(--volume) 100%);
+}
+.sound-volume::-webkit-slider-thumb {
+    appearance: none;
+    width: 9px;
+    height: 18px;
+    border: 1px solid #241529;
+    border-radius: 0;
+    background: #f0e3a5;
+}
+.sound-volume::-moz-range-thumb {
+    width: 9px;
+    height: 18px;
+    border: 1px solid #241529;
+    border-radius: 0;
+    background: #f0e3a5;
+}
+/* A native dialog centered above the game; reuses the prior trade-terminal image. */
+.country-dialog {
+    position: fixed;
+    width: min(1130px, 94vw, calc(92dvh * 1.333333));
+    max-width: none;
+    max-height: 92dvh;
+    padding: 0;
+    border: 0;
+    margin: auto;
+    color: #eadc78;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #130d0f url('./assets/trade-terminal.png') center / 100% 100% no-repeat;
+    box-shadow: 0 28px 110px #000e;
+}
+.country-dialog::backdrop {
+    background: #000c;
+}
+.modal-heading {
+    position: absolute;
+    z-index: 2;
+    top: 17.95%;
+    left: 18.7%;
+    width: 49.7%;
+    display: grid;
+    place-items: center;
+    min-height: 3.1%;
+    font-size: clamp(11px, 1.16vw, 17px);
+    font-weight: bold;
+    margin: 0;
+    background: #08050a;
+    border: 1px solid #a093a9;
+    color: #f0d976;
+}
+.modal-close {
+    position: absolute;
+    z-index: 3;
+    top: 18%;
+    right: 12.35%;
+    width: 12.35%;
+    min-height: 3.1%;
+    color: #55fd55;
+    background: #08050b;
+    border: 1px solid #9c899e;
+    padding: 1px 3px;
+    font-size: clamp(10px, 1.06vw, 16px);
+}
+.modal-close:hover {
+    background: #212325;
+}
+.modal-body {
+    position: absolute;
+    top: 23.1%;
+    left: 12%;
+    width: 76%;
+    height: 47%;
+    display: flex;
+    flex-direction: column;
+    padding: 7px;
+    min-height: 0;
+    border: 2px solid #a192a9;
+    background: repeating-linear-gradient(0deg, #0b0812 0 16px, #17101f 17px 18px);
+}
+.modal-country-heading {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    min-height: 34px;
+    padding: 4px;
+    color: #54fc58;
+    background: #08040c;
+    font-size: clamp(13px, 1.37vw, 20px);
+    font-weight: bold;
+}
+.modal-flag {
+    font-size: 22px;
+}
+.modal-country-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.modal-data {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(10, minmax(27px, 1fr));
+    gap: 3px 8px;
+    scrollbar-color: #8d7297 #0a0710;
+}
+.modal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    padding: 3px 5px;
+    background: #08050edc;
+    border: 1px solid #67576f;
+    font-size: clamp(10px, 1vw, 15px);
+}
+.modal-key {
+    flex: 0 0 auto;
+    color: #65e956;
+}
+.modal-value {
+    min-width: 0;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #f0d977;
+}
+
+@media (max-width: 850px) {
+    body {
+        display: block;
+    }
+    .parkan-app {
+        width: 100%;
+        aspect-ratio: auto;
+        min-height: 100vh;
+        background-size: 100% auto;
+        background-position: center top;
+        background-color: #07040c;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+        padding-top: calc(100vw * 1086 / 1448);
+    }
+    .search-panel,
+    .sound-panel {
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        z-index: 1;
+        width: auto;
+        height: auto;
+    }
+    .search-panel {
+        order: 1;
+        margin: 10px 12px 8px;
+        min-height: 310px;
+        max-height: 410px;
+        padding: 10px;
+    }
+    .sound-panel {
+        order: 2;
+        margin: 4px 12px 18px;
+        min-height: 44px;
+        font-size: 13px;
+    }
+    .terminal-heading {
+        font-size: 16px;
+    }
+    .terminal-subheading {
+        font-size: 12px;
+    }
+    .search-input,
+    .search-submit,
+    .result-item {
+        font-size: 14px;
+    }
+    .result-item {
+        min-height: 32px;
+    }
+    .history-item {
+        font-size: 12px;
+    }
+    .country-dialog {
+        width: min(96vw, 620px);
+        height: min(90dvh, 760px);
+        aspect-ratio: auto;
+        background-size: cover;
+    }
+    .modal-heading {
+        top: 13%;
+        left: 12%;
+        width: 52%;
+        font-size: 12px;
+    }
+    .modal-close {
+        top: 13%;
+        right: 12%;
+        width: 23%;
+        font-size: 12px;
+        min-height: 26px;
+    }
+    .modal-body {
+        top: 20%;
+        left: 10%;
+        width: 80%;
+        height: 62%;
+        padding: 5px;
+    }
+    .modal-data {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .modal-row {
+        min-height: 27px;
+        font-size: 12px;
+    }
+    .modal-country-heading {
+        font-size: 16px;
+    }
+}
+@media (max-width: 440px) {
+    .sound-panel {
+        flex-wrap: wrap;
+    }
+    .search-panel {
+        min-height: 300px;
+    }
+    .country-dialog {
+        width: 98vw;
+    }
+    .modal-body {
+        top: 18%;
+        height: 68%;
+    }
+}
