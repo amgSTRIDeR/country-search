@@ -1,3 +1,4 @@
+import { AbortError, TimeoutError } from '../errors/errors';
 import type { Country, MappedCountry } from '../models/models';
 import debounce from './debounce';
 import { mapCountryResponse } from './mapCountryResponse';
@@ -15,12 +16,18 @@ interface InFlightSearch {
 const responseCache = new Map<string, Country[]>();
 const inFlightSearches = new Map<string, InFlightSearch>();
 
-function isAbortError(error: unknown): boolean {
-    return typeof error === 'object' && error !== null && 'name' in error && error.name === 'AbortError';
-}
+function getAbortReason(signal: AbortSignal): AbortError | TimeoutError {
+    const reason: unknown = signal.reason;
+    if (typeof reason === 'object' && reason !== null && 'name' in reason && reason.name === 'TimeoutError') {
+        const message = 'message' in reason && typeof reason.message === 'string' ? reason.message : undefined;
+        return new TimeoutError(message);
+    }
+    if (typeof reason === 'object' && reason !== null && 'name' in reason && reason.name === 'AbortError') {
+        const message = 'message' in reason && typeof reason.message === 'string' ? reason.message : undefined;
+        return new AbortError(message);
+    }
 
-function getAbortReason(signal: AbortSignal): unknown {
-    return signal.reason ?? new DOMException('The request was aborted.', 'AbortError');
+    return new AbortError();
 }
 
 function createInFlightSearch(query: string): InFlightSearch {
@@ -113,13 +120,21 @@ function getCountries(query: string, signal: AbortSignal): Promise<Country[]> {
 export function createCountrySearch(
     onResults: (countries: MappedCountry[]) => void,
     onError: (error: unknown) => void,
-    onLoading: () => void = () => {}
+    onLoading: () => void = () => {},
+    onRequest: (query: string) => void = () => {}
 ): (query: string) => void {
     let activeController: AbortController | undefined;
     let activeQuery: string | undefined;
 
     const debouncedSearch = debounce((query: string, controller: AbortController) => {
-        void getCountries(query, controller.signal)
+        void Promise.resolve()
+            .then(() => {
+                if (controller.signal.aborted) {
+                    throw getAbortReason(controller.signal);
+                }
+                onRequest(query);
+                return getCountries(query, controller.signal);
+            })
             .then((countries) => countries.map(mapCountryResponse))
             .then((countries) => {
                 if (!controller.signal.aborted) {
@@ -132,7 +147,7 @@ export function createCountrySearch(
                     activeQuery = undefined;
                 }
 
-                if (!controller.signal.aborted && !isAbortError(error)) {
+                if (!controller.signal.aborted && !(error instanceof AbortError)) {
                     onError(error);
                 }
             })
