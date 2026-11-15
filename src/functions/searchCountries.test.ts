@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { HttpError, InvalidArgumentsError } from '../errors/errors';
+import { AbortError, HttpError, InvalidArgumentsError, TimeoutError } from '../errors/errors';
 import { searchCountries } from './searchCountries';
 
 const fetchMock = vi.fn();
@@ -53,5 +53,23 @@ describe('searchCountries', () => {
         const request = searchCountries('Japan', new AbortController().signal);
         await expect(request).rejects.toBeInstanceOf(HttpError);
         await expect(request).rejects.toMatchObject({ status });
+    });
+
+    test('should reject with AbortError when the request is aborted', async () => {
+        const reason = new DOMException('The request was aborted', 'AbortError');
+        const controller = new AbortController();
+        controller.abort(reason);
+        fetchMock.mockRejectedValue(reason);
+
+        await expect(searchCountries('Japan', controller.signal)).rejects.toBeInstanceOf(AbortError);
+    });
+
+    test('should reject with TimeoutError when the request times out', async () => {
+        const reason = new DOMException('The request timed out', 'TimeoutError');
+        const controller = new AbortController();
+        controller.abort(reason);
+        fetchMock.mockRejectedValue(reason);
+
+        await expect(searchCountries('Japan', controller.signal)).rejects.toBeInstanceOf(TimeoutError);
     });
 });
